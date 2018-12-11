@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+
+{% block head%}
+{{super()}}
+    <link rel="stylesheet"
+          href="static/multiple-select.css" />
+{% endblock %}
+
+{% block content %}
+{{super()}}
+ 
+<div class="panel-group">
+	<div class="panel panel-default" style="border-color: black">
+        <div class="panel-heading" style="background-color:black">
+            <h1 style="color: white">
+                Build Your Strategy
+            </h1>
+        </div>
+		<div class="panel-body">
+			<form method="POST" action="{{url_for('predict')}}" id="form">
+				<div class="form-group">
+					<label>Select the ETFs that you want to invest in:</label>
+				    <select id="ms" multiple="multiple" name='asset'>
+				        <option value="XLV">XLV</option>
+		                <option value="XLF">XLF</option>
+		                <option value="SOXX">SOXX</option>
+		                <option value="IYT">IYT</option>
+		                <option value="USO">USO</option>
+		                <option value="ITA">ITA</option>
+		                <option value="VGT">VGT</option>
+		                <option value="XLU">XLU</option>
+		                <option value="ITB">ITB</option>
+		                <option value="GLD">GLD</option>
+		                <option value="AGG">AGG</option>
+		                <option value="DBA">DBA</option>
+		                <option value="UUP">UUP</option>
+		                <option value="KIE">KIE</option>
+		                <option value="SPY">SPY</option>
+				    </select>
+				</div>
+				<hr>
+				<label>You can compare two strategies with the market:</label>
+				<br>
+				<div>
+					<h5><strong>Strategy One:</strong></h5>
+					<div>
+					    <select name='strategy1' onchange="yesnoCheck(this);">
+					        <option value="0">Choose Strategy</option>
+		                    <option value="Maximum Return1">Maximum Return</option>
+		                    <option value="Minimum Variance1">Minimum Variance</option>
+					    </select>
+						<div id="ifyes1" style="display: none;">
+		                    Target Beta <input type="text" name='beta1'>
+		                </div>
+		                <div id="ifno1" style="display: none;">
+		                    Target Return <input type="text" name='return1'>
+		                </div>
+					</div>
+	            </div>
+	            <div>
+	            	<h5><strong>Strategy Two:</strong></h5>
+					<div>
+					    <select name='strategy2' onchange="yesnoCheck(this);">
+					        <option value="0">Choose Strategy</option>
+		                    <option value="Maximum Return2">Maximum Return</option>
+		                    <option value="Minimum Variance2">Minimum Variance</option>
+					    </select>
+					    <div id="ifyes2" style="display: none;">
+		                    Target Beta <input type="text" name='beta2'>
+		                </div>
+		                <div id="ifno2" style="display: none;">
+		                    Target Return <input type="text" name='return2'>
+		                </div>
+					</div>
+	            </div>
+	            <br>
+				<div class="form-group">
+					<Strong>Note: </Strong>You can input any number for target beta and return, but the recommended range for them are (-2, 2). 
+				</div>
+				<hr>
+				<div class="form-group">
+				    <label>Choose your traing window</label>
+				    <br>
+				    <label>Start</label>
+					<input type="date" data-date-inline-picker="false" data-date-open-on-focus="true" name="train_start" min="2007-03-02" max="2018-10-31">
+					<label>End</label>
+					<input type="date" data-date-inline-picker="false" data-date-open-on-focus="true" name="train_end"  min="2007-03-02" max="2018-10-31">
+					&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Please input the date as "mm/dd/yyyy". The range is from 03/02/2007 to 10/31//2018.
+			    </div>
+				<hr>
+				<div class="form-group">
+					<label>Choose your testing window</label>
+				    <br>
+				    <label>Start</label>
+					<input type="date" data-date-inline-picker="false" data-date-open-on-focus="true" name="test_start" min="2007-03-02" max="2018-10-31">
+					<label>End</label>
+					<input type="date" data-date-inline-picker="false" data-date-open-on-focus="true" name="test_end" min="2007-03-02" max="2018-10-31">
+					&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Please input the date as "mm/dd/yyyy". The range is from 03/02/2007 to 10/31//2018.
+				</div>
+				<hr>
+		        <button type="submit" class="btn btn-lg btn-success"><strong>Submit</strong></button>
+			</form>
+        </div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+    <script src="{{url_for('.static',filename='jquery.min.js')}}"></script>
+    <script src="{{url_for('.static',filename='multiple-select.js')}}"></script>
+    <script>
+        $(function() {
+            $('#ms').change(function() {
+                console.log($(this).val());
+            }).multipleSelect({
+                width: '12%'
+            });
+        });
+    </script>
+    <script>
+        function yesnoCheck(that) {
+            if (that.value == "Maximum Return1") {
+                document.getElementById("ifyes1").style.display = "block";
+                document.getElementById("ifno1").style.display = "none";
+            } else if (that.value == "Minimum Variance1") {
+                document.getElementById("ifyes1").style.display = "none";
+                document.getElementById("ifno1").style.display = "block";
+            } else if (that.value == "Maximum Return2") {
+                document.getElementById("ifyes2").style.display = "block";
+                document.getElementById("ifno2").style.display = "none";
+            } else if (that.value == "Minimum Variance2") {
+            	document.getElementById("ifyes2").style.display = "none";
+                document.getElementById("ifno2").style.display = "block";
+            } else {
+            	document.getElementById("ifyes1").style.display = "none";
+                document.getElementById("ifno1").style.display = "none";
+                document.getElementById("ifyes2").style.display = "none";
+                document.getElementById("ifno2").style.display = "none";
+            }
+        }
+    </script>
+{% endblock %}

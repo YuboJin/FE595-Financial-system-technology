@@ -1,0 +1,215 @@
+{% extends "layout.html" %}
+
+{% block head%}
+{{super()}}
+    <link rel="stylesheet"
+          href="static/multiple-select.css" />
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+    <script>
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            processEscapes: true
+          }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+{{super()}}
+
+<div class="page header" style="padding-left: 75px;">
+    <h1>
+        <span class="label" style="background-color: black">Introduction</span>
+    </h1>
+    <hr style="border-color: black;" align="left" width="95%">
+</div>
+<p style="padding-left: 110px; padding-right: 90px;">
+    In this application, you can build your own portfolio and 2 trading strategies in customized time horizon. There are two time windows: training window and testing wnidow. First, your selected portfolio and strategies would be optimized to reach your target for risk or return in the training window. Then the model would be tested in the testing window to compare your strategies' performance against the market.
+</p>
+<br>
+<h2 style="padding-left: 110px;padding-right: 90px;">
+        <span class="label label-info">Assets pool</span>
+</h2>
+<p style="padding-left: 110px;padding-right: 90px;">
+    For practical considerations, the assets pool of investment is assumed to be a set of ETFs large enough to represent the United States' economy. You can choose a combination of assets to establish your portfolio. 
+</p>
+<div class="panel-body">
+    <style>
+        #info table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        #info th, td {
+            padding: 15px;
+            text-align: center;
+            max-width: 330px;
+        }
+        #info tr:nth-child(even) {
+            background-color: #eee;
+        }
+        #info tr:nth-child(odd) {
+           background-color: #fff;
+        }
+        #info th {
+            background-color: black;
+            color: white;
+        }
+    </style>
+    <table style="margin: 0px auto;" id="info">
+        <tr>
+            <th>ETF</th>
+            <th>Attribute Information</th> 
+            <th>ETF</th>
+            <th>Attribute Information</th>
+            <th>ETF</th>
+            <th>Attribute Information</th>
+        </tr>
+        <tr>
+            <td>XLV</td>
+            <td>Health Care Select Sector SPDR ETF</td>
+            <td>XLF</td>
+            <td>Financial Select Sector SPDR ETF</td>
+            <td>SOXX</td>
+            <td>iShares PHLX Semiconductor ETF</td>
+        </tr>
+        <tr>
+            <td>IYT</td>
+            <td>iShares Transportation Average ETF</td>
+            <td>USO</td>
+            <td>United States Oil Fund</td>
+            <td>ITA</td>
+            <td>iShares US Aerospace & Defense ETF</td>
+        </tr>
+        <tr>
+            <td>VGT</td>
+            <td>Vanguard Information Technology ETF</td>
+            <td>XLU</td>
+            <td>Utilities Select Sector SPDR ETF</td>
+            <td>ITB</td>
+            <td>iShares US Home Construction ETF</td>
+        </tr>
+        <tr>
+            <td>AGG</td>
+            <td>iShares Core US Aggregate Bond ETF</td>
+            <td>GLD</td>
+            <td>SPDR Gold Shares</td>
+            <td>DBA</td>
+            <td>Invesco DB Agriculture Fund</td>
+        </tr>
+        <tr>
+            <td>UUP</td>
+            <td>Invesco DB U.S. Dollar Index Bullish Fund</td>
+            <td>KIE</td>
+            <td>SPDR S&P Insurance ETF</td>
+            <td>SPY</td>
+            <td>SPDR S&P 500 ETF</td>
+        </tr>
+    </table>
+</div>
+<hr>
+<h2 style="padding-left: 110px;padding-right: 90px;">
+        <span class="label label-success">Strategies</span>
+</h2>
+<p style="padding-left: 110px;padding-right: 90px;">
+    Your can set up your own strategies: <strong>Maximum Return</strong> with taget beta or <strong>Minimum Variance</strong> with target return. And all those strategies are based on Fama-French 3-factor model.
+</p>
+<h3 style="padding-left: 150px;padding-right: 90px;">
+        <span class="label label-default">Fama-French 3-factor model</span>
+</h3>
+<p style="padding-left: 150px;padding-right: 90px;">
+    Under the factor model, the return of an asset is given by: \[\rho_{i} = r_{f} + \beta_{i}^{FF} (\rho_{M} - r_{f}) + b_{i}^{size} \rho_{SMB} + b_{i}^{value} \rho_{HML} + \varepsilon_{i}\]
+</p>
+<p style="padding-left: 150px;padding-right: 90px;">
+    Where
+    <li style="padding-left: 190px;padding-right: 90px;">
+        \(\rho_{M}\) stands for the market return, \(r_{f}\) stands for the risk-free rate, \(\rho_{SMB}\) stands for the difference return between the small size asset and the big size asset, and \(\rho_{HML}\) is the difference return between the high value asset and the low value asset.
+    </li>
+    <li style="padding-left: 190px;padding-right: 90px;">
+        Those three coefficients \(\beta_{i}^{FF}\), \(b_{i}^{size}\), \(b_{i}^{value}\) are estimated by running a linear regression of the time series \(\rho_{i}-r_{f}\) against the time series \(\rho_{M}-r_{f}\), \(\rho_{SMB}\) and \(\rho_{HML}\).
+    </li>
+</p>
+<br>
+<h3 style="padding-left: 150px;padding-right: 90px;">
+        <span class="label label-default">Maximum Return</span>
+</h3>
+<p style="padding-left: 150px;padding-right: 90px;">
+    Concretely, this strategy maximizes the return of the portfolio subject to a constraint of target beta, where beta is the Matker Factor risk measure. The performance and the risk profiles of such a strategy may be quite different depending on the target beta and the market environment. Generally, a low beta means the strategy is aimed to be decorrelated to the market, and conversely a high beta indicates a big appetite for risk, aimed to ride or scale up the market risk.
+</p>
+<p style="padding-left: 150px;padding-right: 90px;">
+    The optimization problem of this strategy could be expressed as:
+</p>
+<p style="text-align:center">
+  \[\left\{
+  \begin{array}{lr}
+    \displaystyle \max_{\omega \in R^n} \rho^T \omega - \lambda(\omega - \omega_{p})^{T} Q (\omega - \omega_{p}) \\
+    \displaystyle \sum_{i=1}^{n} \beta_{i}^{FF} \omega_{i} = \beta_{target} \\
+    \displaystyle \sum_{i=1}^{n} \omega_{i} = 1, -2 \le \omega_{i} \le 2
+  \end{array}
+\right.
+\]
+</p>
+<p style="padding-left: 150px;padding-right: 90px;">
+    Where
+    <li style="padding-left: 190px;padding-right: 90px;">
+        \(Q\) is the indentity matrix (with diagonal elements equal to 1), \(\omega_{p}\) is the composition of a reference portfolio (all its components equal to \(1/n\)) and \(\lambda\) is a small regularization parameter to limit the turnover.
+    </li>
+    <li style="padding-left: 190px;padding-right: 90px;">
+        \(\beta_{i}^{FF} = \frac{cov(r_{i}, r_{M})}{\sigma^2(r_{M})}\) is the beta of asset \(i\) as defined in the Fama-French 3-factor model so that \(\beta_{P}^{FF} = \sum_{i=1}^n \beta_{i}^{FF} \omega_{i}\) is the beta of the portfolio.
+    </li>
+    <li style="padding-left: 190px;padding-right: 90px;">
+        \(\beta_{target}\) is the portfolio's target beta.
+    </li>
+</p>
+<br>
+<h3 style="padding-left: 150px;padding-right: 90px;">
+        <span class="label label-default">Minimum Variance</span>
+</h3>
+<p style="padding-left: 150px;padding-right: 90px;">
+    This strategy minimizes the variance of the portfolio with a fixed target return. The performance and the risk profiles of such a strategy would be influenced by the target return and the market environment as well.
+</p>
+<p style="padding-left: 150px;padding-right: 90px;">
+    The optimization problem for this strategy could be expressed as:
+</p>
+<p style="text-align:center">
+  \[\left\{
+  \begin{array}{lr}
+    \displaystyle \min_{\omega \in R^n} \omega^T \Sigma \omega + \lambda(\omega - \omega_{p})^{T} Q (\omega - \omega_{p}) \\
+    \displaystyle \sum_{i=1}^{n} \rho_{i} \omega_{i} = \rho_{target} \\
+    \displaystyle \sum_{i=1}^{n} \omega_{i} = 1, -2 \le \omega_{i} \le 2
+  \end{array}
+\right.
+\]
+</p>
+<p style="padding-left: 150px;padding-right: 90px;">
+    Where
+    <li style="padding-left: 190px;padding-right: 90px;">
+        \(\rho_{i}\) is the expected return of asset \(i\), which can be obtained by the linear regression of the factor model.
+    </li>
+    <li style="padding-left: 190px;padding-right: 90px;">
+        \(\Sigma\) is the covariance matrix of the selected portfolio. \(\Sigma = B \Omega_{f} B^{T} + D \), where \(B\) is the coefficient matrix of the assets in the 3-factor model, \(\Omega_{f}\) is the covarianve matrix of the 3 factors and \(D\) is a diagonal matrix containging the residuals' variance of the linear regression (also known as the idiosyncratic risk of individual assets).
+    </li>
+    <li style="padding-left: 190px;padding-right: 90px;">
+        \(\lambda\), \(\omega_{p}\) and \(Q\) are defined as before.
+    </li>
+</p>
+<hr>
+<h2 style="padding-left: 110px;padding-right: 90px;">
+        <span class="label label-warning">Time Window</span>
+</h2>
+<p style="padding-left: 110px;padding-right: 90px;">
+    Your can choose a training window and testing window for your portfolio. Your strategy will be optimized to obtain the weights in each selected assets using the data in the trainging window. And then, the performance of the optimized portfolio will be shown in the testing window.
+</p>
+<p style="padding-left: 110px;padding-right: 90px;">
+    The time range of this appication is: 
+    <span class="label label-default">2007-03-02</span>
+    to
+    <span class="label label-default">2018-10-31</span>
+</p>
+<br><br><br>
+<h1 align="center">
+    <a href="{{url_for('input')}}" class="btn btn-lg" align="center" style="background-color: #504A4B; color: white; padding:30px;font-size:30px;"><strong>Go Build Your Strategy</strong></a>
+</h1>
+<br><br><br>
+
+{% endblock %}

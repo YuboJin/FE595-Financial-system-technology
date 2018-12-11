@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{{super()}}
+
+<div class="panel-group">
+	<div class="panel panel-default" style="border-color: black">
+		<div class="panel-heading" style="background-color:black">
+            <h2 style="color: white">Optomized Portfolio and Performance</h2>
+        </div>
+        <div class="panel-body">
+			<h1 style="padding-left: 110px;padding-right: 90px;" align="center">
+			        <span class="label label-danger">Optimized Portfolio</span>
+			</h1>
+			<br>
+			<h1 style="padding-left: 110px;padding-right: 90px;" align="center">
+			        <span class="label label-danger">{{www}}</span>
+			</h1>
+            <p class="panel-text">
+            	<style>
+				    th, td {
+				        border: 1px solid white;
+				        border-collapse: collapse;
+				    }
+				    table {
+				    	border: 4px solid black;
+				        border-collapse: collapse;
+				    }
+				    th, td {
+				        padding: 15px;
+				        text-align: center;
+				        max-width: 140px;
+				    }
+				    table tr:nth-child(even) {
+				        background-color: #eee;
+				    }
+				    table tr:nth-child(odd) {
+				       background-color: #fff;
+				    }
+				    table th {
+				        background-color: black;
+				        color: white;
+				    }
+				</style>
+                {{weight.to_html(classes="table table-striped", table_id="res") | safe}}
+            </p>
+            <hr>
+            <br>
+			<h1 style="padding-left: 110px;padding-right: 90px;" align="center">
+                    <span class="label label-danger">Performance in training window</span>
+            </h1>
+            <p align="center">
+                <img src="data:image/png;base64, {{ train_fig }}" width="80%">
+            </p>
+            <hr>
+            <br>
+            <h1 style="padding-left: 110px;padding-right: 90px;" align="center">
+                    <span class="label label-danger">Performance in testing window</span>
+            </h1>
+            <p align="center">
+                <img src="data:image/png;base64, {{ test_fig }}" width="80%">
+            </p>
+            <hr>	
+		</div>
+		<h1 align="center">
+		        <a href="{{url_for('home')}}" class="btn btn-lg btn-primary" align="center" style="padding:30px;font-size:30px;"><strong>Return to home</strong></a>
+		        <p></p>
+		        <a href="{{url_for('input')}}" class="btn btn-lg btn-success" align="center" style="padding:30px;font-size:30px;"><strong>Try another portfolio</strong></a>
+		</h1>
+		<br><br><br>
+		<div class="card-footer text-muted">
+			
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='css/styles.css')}}">
+{% endblock %}
