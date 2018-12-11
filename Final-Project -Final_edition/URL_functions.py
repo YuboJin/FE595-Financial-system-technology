@@ -196,8 +196,8 @@ def plot_PnLs(Ret_list, benchmark):
     data[name] = benchmark
     PnL = 100*np.cumprod(data+1)
     PnL.iloc[0] = 100 * np.ones(len(data.columns))
-    ax = PnL.iloc[:,:-1].plot(figsize=(15,8))
-    PnL[name].plot(x=PnL[name].index,y=PnL[name].values,c='r', sharex=ax)
+    ax = PnL.iloc[:,:-1].plot(figsize=(15,8),linewidth=2)
+    PnL[name].plot(x=PnL[name].index,y=PnL[name].values,c='r',linewidth=2,sharex=ax)
     ax.plot([0,len(data)],[100,100],'k--',label='100')
     tick = [int(len(data)/6)*i for i in range(6)]+[len(data)-1]
     ax.set_xticks(tick)
